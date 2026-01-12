@@ -1,17 +1,39 @@
-
-name: CI Test
+name: Deploy to EC2
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Show files
-        run: ls -la
+    - name: Build Docker Image
+      run: docker build -t worldmapapp .
+
+    - name: Save Docker Image
+      run: docker save worldmapapp | gzip > worldmapapp.tar.gz
+
+    - name: Copy to EC2
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_KEY }}
+        source: "worldmapapp.tar.gz"
+        target: "/home/ubuntu/"
+
+    - name: Deploy on EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          docker load < worldmapapp.tar.gz
+          docker stop worldmap || true
+          docker rm worldmap || true
+          docker run -d -p 80:8080 --name worldmap worldmapapp
