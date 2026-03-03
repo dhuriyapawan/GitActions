@@ -1,0 +1,32 @@
+name : dot net App
+
+on :
+    push: 
+        branches: [main]
+
+jobs:
+     build :
+        runs-on : ubuntu-latest
+        steps:
+
+        - name: Checkout Github Actions
+          uses : actions/checkout@v4
+
+        - name : setup .net core 
+          uses : actions/setup-dotnet@v4
+          with :
+            dotnet-version: latest
+
+        - name: Install dependencies
+          run: dotnet restore
+        - name: Build
+          run: dotnet build --configuration Release --no-restore
+        - name: Test
+          run: dotnet test --no-restore --verbosity normal
+        - name: Publish
+          run: dotnet publish -c Release -o dotnetcorewebapp
+        - name: Upload Artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            name: my-artifact
+            path: "./dotnetcorewebapp"
