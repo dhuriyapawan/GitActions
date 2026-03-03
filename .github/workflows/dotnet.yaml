@@ -15,7 +15,7 @@ jobs:
         - name : setup .net core 
           uses : actions/setup-dotnet@v4
           with :
-            dotnet-version: latest
+            dotnet-version: 3.1.302
 
         - name: Install dependencies
           run: dotnet restore
