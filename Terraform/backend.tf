@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket = "devopsrealtime-terraform-state"
+    bucket = "java-app-bucket-01"
     key = "prod/terraform/tfstate"
     region = "us-east-1"
-    dynamodb_table = "terraform-lock"
+    use_lockfile = "terraform-lock"
     encrypt = true
   }
 }
