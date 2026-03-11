@@ -21,7 +21,7 @@ jobs:
            java-version : 17
 
       - name  : Build JAR
-        run   : MVN clean package
+        run   : mvn clean install
 
       - name : Build Docker image
         run  : docker build -t java-app .
