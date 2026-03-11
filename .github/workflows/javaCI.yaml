@@ -32,7 +32,7 @@ jobs:
 
       # We upload the JAR to S3 so the EC2 can pull it during boot (User Data)
       - name: Upload JAR to S3
-        run: aws s3 cp *.jar s3://${{ secrets.S3_BUCKET_NAME }}/app.jar
+        run: aws s3 cp /home/runner/work/GitActions/GitActions/Java-Login-App/target/dptweb-1.0.war s3://${{ secrets.S3_BUCKET_NAME }}/app.jar
 
   provision-infrastructure:
     needs: build-and-push
