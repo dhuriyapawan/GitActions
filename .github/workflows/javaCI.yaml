@@ -18,6 +18,7 @@ jobs:
 
       - name: Build JAR
         run: mvn clean package -DskipTests
+        working-directory : ./Java-Login-App
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
