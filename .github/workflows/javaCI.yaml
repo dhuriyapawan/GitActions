@@ -1,43 +1,50 @@
-name : CI CD Deploy 
+name: End-to-End Java AWS Deploy
 
 on:
-  push :
-    branches:
-      [project_01]
-  
+  push:
+    branches: [ main ]
+
 jobs:
-  build:
-    runs-on : ubuntu-latest
-
+  build-and-push:
+    runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
 
-      - name : checkout
-        uses : actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-      - name : setup java
-        uses: actions/setup-java@v3
-        with: 
-           distribution: temurin
-           java-version : 17
+      - name: Build JAR
+        run: mvn clean package -DskipTests
 
-      - name  : Build JAR
-        run   : mvn clean install
-        working-directory : java-Login-App
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-      - name : Build Docker image
-        run  : docker build -t java-app .
-        
-      - name: Terraform Init
-        run : terraform init
-        working-directory : terraform
+      # We upload the JAR to S3 so the EC2 can pull it during boot (User Data)
+      - name: Upload JAR to S3
+        run: aws s3 cp target/*.jar s3://${{ secrets.S3_BUCKET_NAME }}/app.jar
 
-      - name : Terraform plan
-        run : terraform plan
-        working-directory : terraform
+  provision-infrastructure:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      - name : Terraform Apply 
-        run  : terraform apply -auto-approve
-        working-directory : terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-
-        
+      - name: Terraform Init & Apply
+        working-directory: ./terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve \
+            -var="s3_bucket_name=${{ secrets.S3_BUCKET_NAME }}"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
