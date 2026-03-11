@@ -41,8 +41,8 @@
 
 		<dependency>
 			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>8.3.0</scope>
 		</dependency>
 		
 		
