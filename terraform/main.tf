@@ -13,12 +13,6 @@ module "security" {
   sg_name = "java-app-sg"
 }
 
-module "iam" {
-  source                = "./modules/iam"
-  role_name             = "java-app-role"
-  instance_profile_name = "java-app-profile"
-  policy_arn            = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-}
 
 module "alb" {
   source         = "./modules/alb"
@@ -29,16 +23,7 @@ module "alb" {
   vpc_id         = module.vpc.vpc_id
 }
 
-module "ec2" {
-  source               = "./modules/ec2"
-  ami_id               = "ami-0c94855ba95c71c99"
-  instance_type        = "t3.micro"
-  sg_name              = module.security.sg_id
-  iam_instance_profile = module.iam.instance_profile_name
-  private_subnet_id    = module.vpc.private_subnet_id
-  target_group_arn     = module.alb.target_group_arn
-  user_data_file       = "user_data.sh"
-}
+
 
 resource "aws_s3_bucket" "example" {
   bucket = var.s3_bucket_name
