@@ -1,0 +1,11 @@
+aws_region            = "us-east-1"
+vpc_cidr              = "10.0.0.0/16"
+public_subnet_cidr    = "10.0.1.0/24"
+private_subnet_cidr   = "10.0.2.0/24"
+availability_zone     = "us-east-1a"
+instance_type         = "t3.micro"
+java_app_git_repo     = "https://github.com/your-org/java-app.git"
+ami_id                = "ami-0c94855ba95c71c99"
+min_asg_size          = 2
+max_asg_size          = 5
+desired_asg_capacity  = 2
