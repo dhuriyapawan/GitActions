@@ -18,9 +18,9 @@ module "alb" {
 
 module "backend_ec2" {
   source          = "./modules/ec2"
-  ami             = var.ami 
-  instance_type   = var.instance_type [cite: 3]
-  private_subnets = module.vpc.private_subnets 
-  security_groups = [module.security_groups.backend_sg_id] 
-  s3_bucket_name  = var.s3_bucket_name
+  ami             = var.ami
+  instance_type   = var.instance_type
+  private_subnets = module.vpc.private_subnets
+  security_groups = [module.security_groups.backend_sg_id]
+  docker_image    = var.java_app_docker_image
 }
