@@ -3,6 +3,6 @@ terraform {
     bucket         = "java-app-bucket-01"
     key            = "java-app-bucket-01/terraform.tfstate"
     region         = "eu-north-1"
-    dynamodb_table = "terraform-locks"
+    use_lockfile = true
   }
 }
