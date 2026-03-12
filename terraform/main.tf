@@ -1,31 +1,18 @@
-module "vpc" {
-  source              = "./modules/vpc"
-  vpc_cidr            = "10.0.0.0/16"
-  public_subnet_cidr  = "10.0.1.0/24"
-  private_subnet_cidr = "10.0.2.0/24"
-  vpc_name            = "java-app-vpc"
-  az                  = "us-east-1a"
+resource "aws_vpc" "this" {
+  cidr_block = var.vpc_cidr
+  tags = { Name = var.vpc_name }
 }
 
-module "security" {
-  source  = "./modules/security"
-  vpc_id  = module.vpc.vpc_id
-  sg_name = "java-app-sg"
+output "vpc_id" {
+  value = aws_vpc.this.id
 }
 
-
-module "alb" {
-  source         = "./modules/alb"
-  lb_name        = "java-app-lb"
-  tg_name        = "java-app-tg"
-  sg_id          = module.security.sg_id
-  public_subnets = [module.vpc.public_subnet_id]
-  vpc_id         = module.vpc.vpc_id
+resource "aws_subnet" "public" {
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = var.public_subnet_cidr
+  availability_zone = var.az
 }
 
-
-
-resource "aws_s3_bucket" "example" {
-  bucket = var.s3_bucket_name
-  acl    = "private"
+output "public_subnet_id" {
+  value = aws_subnet.public.id
 }
