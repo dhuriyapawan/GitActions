@@ -30,4 +30,6 @@ jobs:
 
       - name : Build App
         run : mvn clean package
+        working-directory : Java-Login_App
+        
 
