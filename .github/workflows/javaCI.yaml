@@ -32,4 +32,8 @@ jobs:
         run : mvn clean package
         working-directory : Java-Login-App
 
+      - name : upload to s3
+        run : |
+          aws s3 cp target/dptweb-1.0.war s3://java-app-bucket-01/
+
 
