@@ -1,53 +1,33 @@
-name: End-to-End Java AWS Deploy
+name : Java App Deployment
 
-on:
-  push:
-    branches: [ project_01 ]
+on : 
+  push :
+    branches: [project_01]
+permissions:
+    id-token: write
+    contents : read
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+   build:
+    runs-on : ubuntu-latest
+
+    steps: 
+      - name : checkout
+        uses : actions/checkout@v4
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+           distribution: 'temurin'
+           java-version: '17'
+      - name : Configure AWS Credentials using OIDC
+        uses : aws-actions/configure-aws-credentials@v4
+        with : 
+            aws-region : us-east-1
+            role-to-assume : ${{ secrets.AWS_IAM_ROLE}}
+      - name : Test AWS IAM Role
+        run : aws sts get-caller-identity
 
-      - name: Build JAR
-        run: mvn clean package -DskipTests
-        working-directory : ./Java-Login-App
+      - name : Build App
+        run : mvn clean package
 
-      - name: Check JAR file
-        run: ls -l /
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-          output-env-credentials : true
-
-      # We upload the JAR to S3 so the EC2 can pull it during boot (User Data)
-      - name: Upload JAR to S3
-        run: aws s3 cp /home/runner/work/GitActions/GitActions/Java-Login-App/target/dptweb-1.0.war s3://${{ secrets.S3_BUCKET_NAME }}/app.jar
-
-  provision-infrastructure:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform Init & Apply
-        working-directory: ./terraform
-        run: |
-          terraform init
-          terraform apply -auto-approve \
-            -var="s3_bucket_name=${{ secrets.S3_BUCKET_NAME }}"
-        
