@@ -43,20 +43,23 @@ resource "aws_launch_template" "web_app" {
   image_id      = "ami-02dfbd4ff395f2a1b" # Amazon Linux 2 AMI (update for your region)
   instance_type = "t2.micro"
 
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y java-11-amazon-corretto wget unzip
-              # Install Tomcat
-              wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.76/bin/apache-tomcat-9.0.76.zip -O /tmp/tomcat.zip
-              unzip /tmp/tomcat.zip -d /opt/
-              mv /opt/apache-tomcat-9.0.76 /opt/tomcat
-              chmod +x /opt/tomcat/bin/*.sh
-              # Download WAR from S3
-              aws s3 cp s3://my-bucket-name/myapp.war /opt/tomcat/webapps/myapp.war
-              # Start Tomcat
-              /opt/tomcat/bin/startup.sh
-              EOF
+user_data = <<-EOF
+#!/bin/bash
+yum update -y
+yum install -y java-11-amazon-corretto wget unzip -y
+
+# Install Tomcat
+wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.76/bin/apache-tomcat-9.0.76.zip -O /tmp/tomcat.zip
+unzip /tmp/tomcat.zip -d /opt/
+mv /opt/apache-tomcat-9.0.76 /opt/tomcat
+chmod +x /opt/tomcat/bin/*.sh
+
+# Download WAR from S3
+aws s3 cp s3://my-bucket-name/myapp.war /opt/tomcat/webapps/myapp.war
+
+# Start Tomcat
+/opt/tomcat/bin/startup.sh
+EOF
 
   tag_specifications {
     resource_type = "instance"
