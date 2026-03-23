@@ -11,7 +11,7 @@ provider "aws" {
 resource "aws_security_group" "web_sg" {
   name        = "web-app-sg"
   description = "Allow HTTP and SSH"
-  vpc_id      = "vpc-00ee66507602824e0"  # Replace with your VPC ID
+  vpc_id      = "vpc-0f63461325da84b8d"  # Replace with your VPC ID
 
   ingress {
     from_port   = 80
@@ -81,7 +81,7 @@ resource "aws_lb_target_group" "web_tg" {
   name     = "web-app-tg"
   port     = 8080
   protocol = "HTTP"
-  vpc_id   = "vpc-00ee66507602824e0"  # Replace with your VPC ID
+  vpc_id   = "vpc-0f63461325da84b8d"  # Replace with your VPC ID
   health_check {
     path                = "/myapp/"
     interval            = 30
