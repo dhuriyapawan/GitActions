@@ -11,7 +11,7 @@ resource "aws_elastic_beanstalk_application_version" "app_version" {
     name = "V1"
     application = aws_elastic_beanstalk_application.app.name
     bucket = "java-app-bucket-01"
-    key = " dptweb-1.0.war "
+    key = "dptweb-1.0.war "
 
 }
 resource "aws_elastic_beanstalk_environment" "env" {
