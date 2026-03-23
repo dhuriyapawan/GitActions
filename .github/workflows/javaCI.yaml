@@ -46,11 +46,14 @@ jobs:
       # Step 8: Terraform Init
       - name: Terraform Init
         run: terraform init
+        working-directory : Terraform
 
       # Step 9: Terraform Plan
       - name: Terraform Plan
         run: terraform plan -out=tfplan
+        working-directory : Terraform
 
       # Step 10: Terraform Apply
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
+        working-directory : Terraform
