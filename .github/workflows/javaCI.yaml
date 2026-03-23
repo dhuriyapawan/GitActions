@@ -8,7 +8,7 @@ permissions:
     contents : read
 
 jobs:
-   build:
+   build-dev:
     runs-on : ubuntu-latest
 
     steps: 
@@ -35,5 +35,14 @@ jobs:
       - name : upload to s3
         run : |
           aws s3 cp /home/runner/work/GitActions/GitActions/Java-Login-App/target/dptweb-1.0.war s3://java-app-bucket-01/
+      
+ 
+      - name: Terraform Init
+        run: terraform init
 
+      - name: Terraform Plan
+        run: terraform plan
 
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+  
