@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_elastic_beanstalk_application" "app" {
-    name = "java-war-app-2"
+    name = "java-war-app-3"
     description = "Java WAR from existing s3"
   
 }
